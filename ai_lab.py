@@ -126,7 +126,7 @@ def invoke_gemini(api_key,instructions,transport=None):
     else:
         req=Request(url,data=payload,headers={'Content-Type':'application/json','x-goog-api-key':api_key},method='POST')
         try:
-            with urlopen(req,timeout=11) as response:
+            with urlopen(req,timeout=35) as response:
                 raw=response.read(50000)
                 if len(raw)>=50000:raise ValueError('Provider response too large')
                 data=json.loads(raw)
