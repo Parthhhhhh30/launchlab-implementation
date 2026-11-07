@@ -132,8 +132,14 @@ def invoke_gemini(api_key,instructions,transport=None):
                 data=json.loads(raw)
         except HTTPError as exc:
             if exc.code==429:raise RuntimeError('Free-tier rate limit reached; no fallback to paid mode') from exc
-            if exc.code in (401,403):raise RuntimeError('Free-tier model key is invalid or lacks access') from exc
-            raise RuntimeError('Model service refused the request') from exc
+            if exc.code in (401,403):raise RuntimeError('Provider rejected authentication or project access (HTTP '+str(exc.code)+')') from exc
+            if exc.code in (400,404,409,412):
+                try:
+                    body=json.loads(exc.read(8192))
+                    status=str(body.get('error',{}).get('status','UNKNOWN'))
+                except (ValueError,TypeError,AttributeError):status='UNKNOWN'
+                raise RuntimeError('Provider request rejected (HTTP '+str(exc.code)+', '+re.sub(r'[^A-Z_]', '', status)[:35]+'). Check API project and model compatibility.') from exc
+            raise RuntimeError('Model service refused request (HTTP '+str(exc.code)+')') from exc
         except (URLError,TimeoutError) as exc:raise RuntimeError('Model service unavailable or timed out') from exc
     parsed=parse_response(data)
     usage=data.get('usageMetadata',{})
