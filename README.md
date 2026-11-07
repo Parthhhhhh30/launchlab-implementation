@@ -2,6 +2,14 @@
 
 **Independent functional portfolio exercise. Not affiliated with Metaview or Greenhouse.** All customer, team, applicant, usage and training data are fictional; none of the simulated activities are verified commercial results.
 
+## NEW — real AI instruction configuration clinic
+
+`/agent-lab` is an independent synthetic AI model-evaluation exercise, not an applicant assessment platform. It runs **Gemini 2.5 Flash-Lite** on a fixed, six-case fictional evidence set when `GEMINI_API_KEY` is configured on the server. The owner can edit and version two instruction sets, run the same cases, inspect citations and compare responses against a human-authored reference. One case contains an injection attempt in untrusted source material. Structured model output is validated strictly before saving; any missing or fabricated citations cause the run to fail closed. Outputs are observations about evidence of customer-implementation ownership, **not hiring suitability, candidate scores, or employment recommendations**. No actual candidate records are accepted.
+
+**Cost safety:** No model request occurs without a server-side key. Neither the key nor a paid fallback is exposed to visitors. Persistent PostgreSQL/SQLite usage controls cap invocations at **3 per visitor workspace and 12 globally per UTC day**, counting errors too. These are safeguards against accidentally exceeding the advertised free tier, but do **not** independently guarantee a zero bill if someone uses a key from a paid Google project. Use a key from a **Free** project without billing enabled. API rate limits can still produce a 429. Never enter real candidate information. Google may process free-tier submissions under its applicable terms.
+
+See `docs/AI_RELEASE_GATE.md` for authentication and launch requirements. The application remains functional as a non-AI implementation studio when the key is absent, and displays **MODEL CONNECTION NOT CONFIGURED** instead of faking AI results.
+
 > **Recruiter walkthrough (90 seconds):** [Demo guide](docs/DEMO_GUIDE.md) · [Release audit](docs/RELEASE_AUDIT.md)
 
 

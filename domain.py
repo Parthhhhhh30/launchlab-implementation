@@ -5,6 +5,7 @@ from __future__ import annotations
 from copy import deepcopy
 from datetime import datetime, timezone
 from typing import Any
+from ai_lab import edit_prompt
 import re
 
 MAX_EVENTS = 180
@@ -109,7 +110,10 @@ def act(original:dict, action:str, data:dict) -> dict:
     state=deepcopy(original)
     if len(state["activity"])>=MAX_EVENTS:raise ValueError("Workspace event limit reached; start a fresh demo")
     message=""
-    if action=="edit_criterion":
+    if action=="edit_ai_prompt":
+        lab=edit_prompt(state,data.get("mode"),data.get("instructions"))
+        message=f"Saved {data.get('mode')} AI instruction version {lab['prompt_versions'][data['mode']]} (no model request made)"
+    elif action=="edit_criterion":
         c=_one(state["criteria"],data.get("id"))
         desc=data.get("description","")
         kind=data.get("kind",c["kind"])

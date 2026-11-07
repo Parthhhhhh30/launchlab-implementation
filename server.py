@@ -153,3 +153,138 @@ async def export(request:Request):
     response.headers['Content-Disposition']='attachment; filename="launchlab-synthetic-handover.json"'
     response.headers['Cache-Control']='no-store'
     return response
+
+# MODEL EVALUATION: free-tier-only, server-side key, fixed synthetic cases.
+# See ai_lab.py. No external ATS, tools, arbitrary user profiles or applicant records.
+from ai_lab import init_lab, public_cases, MODEL, invoke_gemini, now_iso
+import asyncio
+from datetime import datetime, timezone
+
+AI_MAX_PER_WORKSPACE_DAY = 3
+AI_MAX_GLOBAL_DAY = 12
+
+def _safe_origin(request):
+    origin=request.headers.get('origin')
+    if not origin:return
+    from urllib.parse import urlparse
+    o=urlparse(origin)
+    if o.scheme not in ('http','https') or o.hostname!=request.url.hostname:
+        raise HTTPException(403,'Cross-site request blocked')
+
+def _ai_key():
+    return os.environ.get('GEMINI_API_KEY','').strip()
+
+@app.get('/agent-lab')
+async def ai_lab_page():
+    return FileResponse(str(BASE/'static'/'agent-lab.html'))
+
+@app.get('/api/ai/status')
+async def ai_status(request:Request):
+    tok=session_id(request)
+    if not tok:raise HTTPException(401,'Open the site to initialise a workspace')
+    try:s=load(tok)
+    except Exception:raise HTTPException(503,'Persistent store unavailable')
+    if not s:raise HTTPException(404,'Workspace missing')
+    import copy
+    lab=copy.deepcopy(init_lab(s))
+    if lab.get('pending'):
+        # A stale lease is displayed as unavailable rather than silently billed again.
+        lab['pending']={'status':'running'}
+    return JSONResponse({'ai_lab':lab,'cases':public_cases(),'model':MODEL,
+                         'available':bool(_ai_key()),'free_tier_only':True,
+                         'limits':{'per_workspace_per_day':AI_MAX_PER_WORKSPACE_DAY,'global_per_day':AI_MAX_GLOBAL_DAY},
+                         'disclaimer':'Public fictional evidence only. Model responses are QA observations, not applicant decisions.'},
+                        headers={'Cache-Control':'no-store'})
+
+def _reserve_model_call(tok, revision, mode):
+    """Two atomic quotas and one workspace lease, counted before contacting provider."""
+    import copy
+    day=datetime.now(timezone.utc).strftime('%Y-%m-%d')
+    lease=secrets.token_hex(12)
+    with connect() as (conn,kind):
+        if kind=='postgres':
+            conn.execute('BEGIN')
+            conn.execute('CREATE TABLE IF NOT EXISTS launchlab_ai_usage (day TEXT NOT NULL, subject TEXT NOT NULL, count INTEGER NOT NULL DEFAULT 0, PRIMARY KEY(day,subject))')
+            row=conn.execute('SELECT document FROM launchlab_workspaces WHERE id=%s FOR UPDATE',(tok,)).fetchone()
+        else:
+            conn.execute('BEGIN IMMEDIATE')
+            conn.execute('CREATE TABLE IF NOT EXISTS launchlab_ai_usage (day TEXT NOT NULL, subject TEXT NOT NULL, count INTEGER NOT NULL DEFAULT 0, PRIMARY KEY(day,subject))')
+            row=conn.execute('SELECT document FROM launchlab_workspaces WHERE id=?',(tok,)).fetchone()
+        if row is None:raise LookupError('Workspace missing')
+        state=row[0] if isinstance(row[0],dict) else json.loads(row[0])
+        if state['revision']!=revision:raise RuntimeError('Workspace changed; reload to avoid a stale configuration')
+        lab=init_lab(state)
+        pending=lab.get('pending')
+        if pending:
+            from datetime import datetime as dt
+            started=dt.fromisoformat(pending['started'].replace('Z','+00:00'))
+            if (datetime.now(timezone.utc)-started).total_seconds()<90:
+                raise ValueError('A model evaluation is already running. Reload after it finishes.')
+        if mode not in ('baseline','refined'):raise ValueError('Unknown instruction version')
+        for subject,limit in [('global',AI_MAX_GLOBAL_DAY),('workspace:'+tok,AI_MAX_PER_WORKSPACE_DAY)]:
+            if kind=='postgres':
+                conn.execute('INSERT INTO launchlab_ai_usage (day,subject,count) VALUES (%s,%s,0) ON CONFLICT DO NOTHING',(day,subject))
+                updated=conn.execute('UPDATE launchlab_ai_usage SET count=count+1 WHERE day=%s AND subject=%s AND count<%s RETURNING count',(day,subject,limit)).fetchone()
+            else:
+                conn.execute('INSERT OR IGNORE INTO launchlab_ai_usage(day,subject,count) VALUES (?,?,0)',(day,subject))
+                updated=conn.execute('UPDATE launchlab_ai_usage SET count=count+1 WHERE day=? AND subject=? AND count<? RETURNING count',(day,subject,limit)).fetchone()
+            if updated is None:raise ValueError('Daily free-tier demonstration quota exhausted. No paid fallback is enabled.')
+        instructions=lab['prompts'][mode]
+        lab['pending']={'id':lease,'started':now_iso(),'mode':mode}
+        state['revision']+=1
+        state['activity'].insert(0,{'id':f'AI-{lease[:8]}','kind':'ai_run_requested', 'text':'Synthetic evidence QA evaluation requested ('+mode+')','at':now_iso()})
+        if kind=='postgres':conn.execute('UPDATE launchlab_workspaces SET document=%s::jsonb,updated_at=NOW() WHERE id=%s',(json.dumps(state),tok))
+        else:conn.execute('UPDATE launchlab_workspaces SET document=?,updated_at=? WHERE id=?',(json.dumps(state),str(time.time()),tok))
+        conn.commit()
+        return lease,instructions,lab['prompt_versions'][mode]
+
+def _finish_model_call(tok,lease,mode,prompt,version,result,error):
+    with connect() as (conn,kind):
+        if kind=='postgres':
+            conn.execute('BEGIN')
+            row=conn.execute('SELECT document FROM launchlab_workspaces WHERE id=%s FOR UPDATE',(tok,)).fetchone()
+        else:
+            conn.execute('BEGIN IMMEDIATE')
+            row=conn.execute('SELECT document FROM launchlab_workspaces WHERE id=?',(tok,)).fetchone()
+        if not row:raise LookupError('Workspace missing')
+        state=row[0] if isinstance(row[0],dict) else json.loads(row[0]);lab=init_lab(state)
+        if not lab.get('pending') or lab['pending'].get('id')!=lease:
+            raise RuntimeError('Evaluation lease expired; result was not recorded')
+        record={'id':lease,'model':MODEL,'mode':mode,'prompt':prompt,'version':version,
+                'created':now_iso(),'status':'failed' if error else 'completed',
+                'result':result if not error else None,'error':error}
+        lab['runs']=[record]+lab['runs'][:5]
+        lab['pending']=None
+        state['revision']+=1
+        state['activity'].insert(0,{'id':f'AI-{lease[:8]}-done','kind':'ai_run_result','text':'AI QA '+('failed: '+error if error else f'completed for {mode}; {result["agreement_count"]}/6 synthetic reference matches'), 'at':now_iso()})
+        if kind=='postgres':conn.execute('UPDATE launchlab_workspaces SET document=%s::jsonb,updated_at=NOW() WHERE id=%s',(json.dumps(state),tok))
+        else:conn.execute('UPDATE launchlab_workspaces SET document=?,updated_at=? WHERE id=?',(json.dumps(state),str(time.time()),tok))
+        conn.commit()
+        return record
+
+@app.post('/api/ai/run')
+async def ai_run(request:Request):
+    _safe_origin(request)
+    if request.headers.get('content-type','').split(';')[0]!='application/json':raise HTTPException(415,'JSON required')
+    key=_ai_key()
+    if not key:raise HTTPException(503,'Live inference not configured. No paid provider fallback.')
+    tok=session_id(request)
+    if not tok:raise HTTPException(401,'Open a workspace first')
+    try:body=await request.json()
+    except Exception:raise HTTPException(400,'Invalid JSON')
+    if not isinstance(body,dict) or len(json.dumps(body))>500:raise HTTPException(400,'Invalid evaluation request')
+    mode=body.get('mode'); rev=body.get('revision')
+    if mode not in ('baseline','refined') or not isinstance(rev,int) or isinstance(rev,bool):raise HTTPException(422,'Expected instruction version and workspace revision')
+    try:lease,prompt,version=await asyncio.to_thread(_reserve_model_call,tok,rev,mode)
+    except ValueError as exc:raise HTTPException(429,str(exc))
+    except RuntimeError as exc:raise HTTPException(409,str(exc))
+    except LookupError as exc:raise HTTPException(404,str(exc))
+    except Exception:raise HTTPException(503,'Unable to reserve free-tier inference capacity')
+    result=None;err=None
+    try:result=await asyncio.to_thread(invoke_gemini,key,prompt)
+    except Exception as exc:
+        err=str(exc) if isinstance(exc,(ValueError,RuntimeError)) else 'Model provider response unavailable'
+    try:record=await asyncio.to_thread(_finish_model_call,tok,lease,mode,prompt,version,result,err)
+    except Exception:raise HTTPException(503,'Model evaluation could not be saved')
+    if err:raise HTTPException(502,err)
+    return JSONResponse({'run':record,'status':'completed'},headers={'Cache-Control':'no-store'})
