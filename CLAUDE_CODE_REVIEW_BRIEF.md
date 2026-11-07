@@ -1,0 +1,3 @@
+# Independent engineering review / Claude Code
+
+Read `README.md`, `domain.py`, `server.py`, `static/app.js`, `static/styles.css`, and all tests. Do not assume the README is correct. Run the full test suite and browser_smoke. Try to break: JSON action input validation, transaction isolation, cookie session enforcement, PostgreSQL code path, restart persistence, stale approval invalidation, simulated integration test, same-origin POST controls, event cap, XSS through text inputs, and responsive UI. Separate confirmed issues from unverified concerns, identify concrete repros and severity, and propose the smallest safe corrections. Do not modify code without recording test evidence; do not call this enterprise-ready.

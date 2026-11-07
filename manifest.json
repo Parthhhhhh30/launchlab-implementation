@@ -1,0 +1,120 @@
+{
+  "archive": "LaunchLab_AI_Implementation_Studio_Source.zip",
+  "source": [
+    {
+      "path": ".gitignore",
+      "sha256": "5112f905b91391831c1f9b02990967d957bd801da9ff088c45e189098e50ed7e",
+      "bytes": 111
+    },
+    {
+      "path": "README.md",
+      "sha256": "897ceb1125ee86ef1e2309fd0627779b1aae43c49957cd7ddea35fc40d7fa3b0",
+      "bytes": 7124
+    },
+    {
+      "path": "api/index.py",
+      "sha256": "043bdd3e53637a44be51686040f8c98af01df2daeb9376523b161a1135981879",
+      "bytes": 80
+    },
+    {
+      "path": "docs/CLAUDE_CODE_REVIEW_BRIEF.md",
+      "sha256": "88dc79c109ed1bb782fad1cd91d6f06d2bba3454cfeb8f67019b94c9181cd568",
+      "bytes": 723
+    },
+    {
+      "path": "docs/CODEX_IMPLEMENTATION_BRIEF.md",
+      "sha256": "8a680247b051e81a49182a81d664e7ee303b2a840cdb312f473f4a3239108eaf",
+      "bytes": 738
+    },
+    {
+      "path": "docs/DEMO_GUIDE.md",
+      "sha256": "ca15bcb8b80c942653bac7e8942d45f86ec04b502699f7c2f7191491ef092a68",
+      "bytes": 1759
+    },
+    {
+      "path": "docs/RELEASE_AUDIT.md",
+      "sha256": "c2ddb5953ae357317f6c31179cd9162242b99bdf9e2cad7a345adafbea1ab0fa",
+      "bytes": 3079
+    },
+    {
+      "path": "docs/launchlab-adoption.png",
+      "sha256": "4d23ca0d41333e312cb459edb5347d220e93db345215a10865bd396f986fb396",
+      "bytes": 181295
+    },
+    {
+      "path": "docs/launchlab-configuration.png",
+      "sha256": "ed3112d2e18363b05608197bf72a7040055b19675dfe75758220a012ad7b6c78",
+      "bytes": 170603
+    },
+    {
+      "path": "docs/launchlab-desktop.png",
+      "sha256": "17a75f0179c4f71eab67e1fc40cef9945f170ea6d9db3f2b2705d5d87bbaea00",
+      "bytes": 222242
+    },
+    {
+      "path": "docs/launchlab-mobile.png",
+      "sha256": "3c1b123810a2ec1032e32b064ba1b301a2a8bddde8b0bbd1e9606bc5105d883a",
+      "bytes": 182635
+    },
+    {
+      "path": "domain.py",
+      "sha256": "e8e8b99af83e5c35ad9bf58c059a09d006560b69439185838956bdab29f35a77",
+      "bytes": 14048
+    },
+    {
+      "path": "pytest.ini",
+      "sha256": "07e12af78809b103a9e003b9bf24f9718928fa263046b37bf3ebc9ebbf802ceb",
+      "bytes": 24
+    },
+    {
+      "path": "requirements-dev.txt",
+      "sha256": "5d00ed20efcbffca2c09c7fddc388efbce4b2e9ca44ad4ae0473ea0c7dcbe899",
+      "bytes": 83
+    },
+    {
+      "path": "requirements.txt",
+      "sha256": "9185ada392722fc251a4ed98e8cdae94e1ccafb4ea1307143b2d0faae1f600fb",
+      "bytes": 41
+    },
+    {
+      "path": "server.py",
+      "sha256": "456cb714536e3623fa97b17f373188313d3eff4003181d4b4f926ab74a0cd735",
+      "bytes": 7757
+    },
+    {
+      "path": "static/app.js",
+      "sha256": "288f672cd1d4285fbb212a67557d1e7302dc9958b498e673d5219e38e4d94f9b",
+      "bytes": 30579
+    },
+    {
+      "path": "static/index.html",
+      "sha256": "2d40a253c0aebd92448b5ec790ecb3ef70bad7f24d9a4436e632da08fc7c54d9",
+      "bytes": 3528
+    },
+    {
+      "path": "static/styles.css",
+      "sha256": "d4f55e073e21a4396602d5e94414dd27859092873d930da1c57a82ff2e40a4b0",
+      "bytes": 15730
+    },
+    {
+      "path": "tests/browser_smoke.py",
+      "sha256": "45bc2a449553c771b1c89c22b0a797fec72d28b7e36927d2298566d7f9998fb1",
+      "bytes": 7374
+    },
+    {
+      "path": "tests/test_api.py",
+      "sha256": "be49f7693c2bea1f7252531d426bca46b05311ca7240480675a8e291a59f869a",
+      "bytes": 2392
+    },
+    {
+      "path": "tests/test_domain.py",
+      "sha256": "3adedf5d2b56143a050447f91a46c15d0e09371fbd4c5a92f45711768e4aaee6",
+      "bytes": 4409
+    },
+    {
+      "path": "vercel.json",
+      "sha256": "3d204f7b0ac582f0c12fc5df10e707f949ac2fd2495dfe33c360e0b9efcadd53",
+      "bytes": 154
+    }
+  ]
+}

@@ -1,0 +1,3 @@
+# Codex implementation / repair brief
+
+Read the whole repo and `docs/CLAUDE_CODE_REVIEW_BRIEF.md`. Run Python domain/API tests and Chromium smoke before making changes. Implement only evidenced fixes and high-value upgrades that improve the exact Metaview Implementation Specialist problem: real configuration validation, training practice and post-launch adoption. Do not add a generic dashboard, fabricated customers or auto-improving adoption. Preserve isolated persistent workspaces, revision conflicts, origin checks, synthetic-only data and deterministic rules. Prefer minimal dependencies and free-tier-compatible hosting. Finish with a difference report, tests and screenshots; never claim to have run external SaaS integrations.
