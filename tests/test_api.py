@@ -42,3 +42,16 @@ def test_reset_creates_new_workspace(tmp_path,monkeypatch):
   x=client.get('/api/workspace');t=x.cookies['launchlab_session']
   r=client.post('/api/reset');assert r.status_code==200
   assert r.cookies['launchlab_session']!=t
+
+
+def test_public_experience_and_studio_routes():
+ with TestClient(server.app) as client:
+  landing=client.get('/')
+  assert landing.status_code==200
+  assert 'SIGNED' in landing.text and 'Break the workflow' in landing.text
+  assert '/static/experience.js' in landing.text
+  studio=client.get('/studio')
+  assert studio.status_code==200 and 'Implementation studio' in studio.text
+  assert 'return-story' in studio.text
+  for url in ['/static/experience.css','/static/experience.js','/static/app.js']:
+   assert client.get(url).status_code==200

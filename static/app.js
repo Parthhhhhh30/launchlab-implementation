@@ -1,6 +1,6 @@
 (() => {
 'use strict';
-let payload=null,route='command',pending=false;
+let payload=null,route=(['command','configuration','readiness','enablement','adoption','handover'].includes(location.hash.substring(1))?location.hash.substring(1):'command'),pending=false;
 const $=s=>document.querySelector(s);
 const esc=s=>String(s??'').replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
 const nl=s=>esc(s).replace(/\n/g,'<br>');
@@ -12,7 +12,7 @@ function stat(label,num,caption,symbol='↗'){return `<div class="metric"><div c
 function header(eyebrow,title,description,side=''){return `<div class="page-head"><div><div class="eyebrow">${eyebrow}</div><h1>${title}</h1><p class="lede">${description}</p></div>${side}</div>`}
 function section(name,right=''){return `<div class="section-line"><h2 class="subhead">${name}</h2><span class="kicker">${right}</span></div>`}
 function panel(name,description,content,extra=''){return `<section class="panel"><div class="panel-header"><div><h3 class="subhead">${name}</h3>${description?`<p>${description}</p>`:''}</div>${extra}</div>${content}</section>`}
-function navigate(id){if(!R[id])return;route=id;document.querySelectorAll('.nav').forEach(n=>n.classList.toggle('active',n.dataset.route===id));$('#crumb').textContent=R[id];render();window.scrollTo({top:0,behavior:'instant'});}
+function navigate(id){if(!R[id])return;route=id;document.querySelectorAll('.nav').forEach(n=>n.classList.toggle('active',n.dataset.route===id));$('#crumb').textContent=R[id];history.replaceState(null,'','#'+id);render();window.scrollTo({top:0,behavior:'instant'});}
 function state(){return payload.state}
 function b(){return payload.readiness.blockers}
 function command(){const s=state(),r=payload.readiness,a=payload.adoption;const step=s.launched?'Pilot in motion':r.ready?'Ready for pilot':'Pre-launch review';const cta=s.launched?'Inspect adoption':'Clear launch gates';return `${header('CASE FILE 01 / NORTHSTAR LABS','The work between<br>signed and successful.','A functional implementation case. Configure a fictional AI recruiting rollout, clear evidence gates, train users, then investigate whether adoption actually sticks.',`<div class="meta-pills">${tag(s.launched,'PILOT LIVE','PRE-LAUNCH')}<span class="pill">REVISION ${s.revision}</span></div>`)}
@@ -44,5 +44,6 @@ document.addEventListener('click',async e=>{const el=e.target.closest('button,a'
 document.addEventListener('submit',e=>{const f=e.target;if(f.getAttribute('id')!=='modalForm')return;e.preventDefault();const data=Object.fromEntries(new FormData(f).entries());const id=f.dataset.id;if(id)data.id=id;for(const key of ['value','count'])if(key in data)data[key]=Number(data[key]);commit(f.dataset.submit,data)});
 $('#dialog').addEventListener('click',e=>{if(e.target.dataset.close)closeModal()});window.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal()});
 $('#resetBtn').addEventListener('click',async()=>{if(!confirm('Start a new independent fictional workspace? Your current workspace will remain in its saved session but no longer be attached to this browser. Export first if you want a copy.'))return;const r=await fetch('/api/reset',{method:'POST',credentials:'same-origin'});if(!r.ok){toast('Unable to reset persistent workspace',true);return}payload=await r.json();navigate('command');toast('Fresh synthetic scenario created')});
+document.querySelectorAll('.nav').forEach(n=>n.classList.toggle('active',n.dataset.route===route));
 refresh();
 })();

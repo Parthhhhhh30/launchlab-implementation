@@ -77,7 +77,10 @@ def cookie(response,token,request):
     response.set_cookie('launchlab_session',token,httponly=True,secure=request.url.scheme=='https',samesite='lax',max_age=60*60*24*60,path='/')
 
 @app.get('/')
-async def index():return FileResponse(str(BASE/'static'/'index.html'))
+async def index():return FileResponse(str(BASE/'static'/'experience.html'))
+
+@app.get('/studio')
+async def studio():return FileResponse(str(BASE/'static'/'studio.html'))
 
 @app.get('/api/workspace')
 async def get_workspace(request:Request):

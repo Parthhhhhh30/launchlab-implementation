@@ -1,3 +1,33 @@
+# LaunchLab v2 visual experience — supplementary release audit
+
+## Design diagnosis
+
+The v1 standalone workspace opened with a generic six-tab side navigation and a list of unresolved checkboxes. Although operationally useful, a hiring manager scanning a link would have needed to learn the UI before discovering its point. This version adds an original, editorial, narrative landing page separate from — but connected to — the working studio. It avoids copying Metaview brand assets and deliberately separates user-facing narrative from proof of functional delivery.
+
+## Execution claims / boundaries
+
+- Live interactive actions from `/` call the **same** stateful FastAPI API as `/studio`, backed by PostgreSQL in production.
+- Criterion revision invalidates fictional sign-off. Field mapping is a genuinely executed deterministic source transformation. Breaking it fails; repairing and rerunning passes.
+- Engagement graphic and initial seven-gate/4-of-11 figures are a **synthetic kickoff baseline**, not live product telemetry. Live lab uses current saved workspace values and revision.
+- The mini enablement exercise does **not** certify a real learner or affect implementation state; the full studio records explicitly simulated training checks.
+- No real Metaview account, ATS integration, LLM, authenticated customer, production recruiting data, hiring decision or measured commercial result is claimed.
+
+## v2 local verification
+
+- 18 pytest checks including experience routes.
+- Existing studio browser workflow across 16 meaningful operations still tested.
+- New browser experience smoke checks API mutation, failed/repaired mapping, reload persistence, teaching explanation, and mobile 390px layout.
+- Original desktop and mobile evidence screenshots preserved, new `experience-desktop.png` and `experience-mobile.png` generated.
+
+## Release gates outstanding until performed
+
+- Actual GitHub commit and Vercel READY status for this revision.
+- Production `/`, `/studio`, `/api/health`, `/static/experience.js` response checks.
+- Full live change -> reload persistence check and production UI review.
+- Independent Claude/Codex execution not claimed. WCAG AA certification not claimed.
+
+---
+
 # LaunchLab release audit — 7 November 2026
 
 ## Release standard

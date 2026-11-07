@@ -95,7 +95,7 @@ with sync_playwright() as p:
  page.locator('[data-action="handover"]').click()
  page.wait_for_function("document.querySelector('#store-status').textContent.includes('v16')")
  assert 'HANDOVER RECORDED' in page.locator('main').inner_text()
- page.set_content(html);page.add_style_tag(content=css);page.add_script_tag(content=script);page.wait_for_selector('.hero-card',timeout=12000);assert 'Saved · v16' in page.locator('#store-status').inner_text()
+ page.set_content(html);page.add_style_tag(content=css);page.add_script_tag(content=script);page.wait_for_selector('#store-status',timeout=12000);page.wait_for_function("document.querySelector('#store-status').textContent.includes('v16')");assert 'Saved · v16' in page.locator('#store-status').inner_text()
  assert 'Saved · v16' in page.locator('#store-status').inner_text()
  print('Full workflow + reload persisted across 16 revisions; JS errors:',errors)
  assert not errors,errors

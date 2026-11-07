@@ -4,6 +4,28 @@
 
 > **Recruiter walkthrough (90 seconds):** [Demo guide](docs/DEMO_GUIDE.md) · [Release audit](docs/RELEASE_AUDIT.md)
 
+
+## The recruiter-facing experience (v2)
+
+**Public case experience:** `https://launchlab-implementation.vercel.app/`  
+**Working implementation studio:** `https://launchlab-implementation.vercel.app/studio`
+
+The project is intentionally **two connected surfaces**, not two fake demonstrations. The public-facing experience is a distinctive, scroll-led case story with three interactive examples tied to the actual FastAPI workspace: a customer-criterion revision, a deliberately broken/repaired synthetic ATS mapping, and saved adoption observations. Both surfaces use the same server-side `launchlab_session` and Neon PostgreSQL. Navigation from the experience to `/studio#configuration` and other phases preserves the visitor's workspace. A mini role-calibration training exercise shows an example of non-technical customer enablement; answers are explanatory UI only and are **not claimed to be actual training or model performance**.
+
+The public kickoff figures (seven gates and four of eleven week-one users) are a **fixed fictional baseline**, not a live analytics report. The workbench itself displays live saved revision/state. The interactive changes require API acceptance; a failed or unavailable store is labelled, not replaced by synthetic success.
+
+The new experience is original custom HTML/CSS/JS, deliberately not a clone of Metaview's marketing site; uses semantic sections, arrow-key tabs, accessible status announcements, a reduced-motion mode and responsive layouts. The existing implementation workspace remains functional and available at `/studio`.
+
+**Test the new experience** alongside the prior 17 regression tests and full 16-action studio journey:
+
+```sh
+python -m pytest -q
+python tests/browser_smoke.py
+python tests/experience_smoke.py
+```
+
+The scenario does **not** connect to real AI models, a real ATS, an external customer or applicant data. The term “agent” describes the fictional customer's desired recruiting workflow, not a deployed inference engine in this case.
+
 ## What this actually does
 
 LaunchLab models a single fictional customer, Northstar Labs, from unapproved recruiting requirements through an implementation readiness check, enablement, staged pilot, adoption-recovery decisions and synthetic handover.
