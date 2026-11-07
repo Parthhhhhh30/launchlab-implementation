@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#f4f1ea" />
+  <meta name="description" content="A working, synthetic AI-recruiting customer implementation and adoption exercise." />
+  <title>LaunchLab — The work between signed and successful</title>
+  <link rel="stylesheet" href="/static/styles.css" />
+</head>
+<body>
+ <div class="shell">
+  <aside class="side" aria-label="Primary navigation">
+    <a class="brand" href="/" aria-label="LaunchLab home"><span class="logo-mark"><span></span><span></span><span></span><span></span></span><span><b>launchlab</b><small>Implementation studio</small></span></a>
+    <div class="rail-label">WORKSPACE / 001</div>
+    <div class="side-account"><span class="orbit-dot"></span><span><strong>Northstar Labs</strong><small>Independent case study</small></span><span class="chevron">⌄</span></div>
+    <div class="nav-label">THE IMPLEMENTATION</div>
+    <nav id="nav">
+      <button class="nav active" data-route="command"><span class="nav-ico">◈</span>Command room <span class="nav-number">01</span></button>
+      <button class="nav" data-route="configuration"><span class="nav-ico">⌘</span>Configure <span class="nav-number">02</span></button>
+      <button class="nav" data-route="readiness"><span class="nav-ico">▣</span>Go-live gates <span class="nav-number">03</span></button>
+      <button class="nav" data-route="enablement"><span class="nav-ico">◫</span>Enablement <span class="nav-number">04</span></button>
+      <button class="nav" data-route="adoption"><span class="nav-ico">↗</span>Adoption & recovery <span class="nav-number">05</span></button>
+      <button class="nav" data-route="handover"><span class="nav-ico">≡</span>Handover <span class="nav-number">06</span></button>
+    </nav>
+    <div class="rail-bottom"><div class="demo-tag"><span class="demo-dot"></span> SYNTHETIC WORKSPACE</div><p>An independent portfolio exercise. Not affiliated with Metaview. No live ATS or candidate information.</p><button id="resetBtn" class="rail-reset">↺ &nbsp; Start fresh scenario</button></div>
+  </aside>
+  <div class="body-area">
+    <header class="topbar"><div class="crumb"><span>CLIENT WORKSPACE</span><i>/</i><b id="crumb">Command room</b></div><div class="top-actions"><span id="store-status" class="save-state"><span class="save-circle"></span>Connecting…</span><a href="/api/export" class="export-link" title="Export case data and activity">↗ &nbsp; Export evidence</a><div class="avatar" title="Private synthetic workspace">P</div></div></header>
+    <main id="main" tabindex="-1"><div class="loading"><span class="loading-symbol">⌘</span><h1>Opening your workspace</h1><p>Loading the implementation case and its recorded decisions.</p></div></main>
+    <footer class="sitefoot"><span>LAUNCHLAB / INDEPENDENT IMPLEMENTATION EXERCISE</span><span>Fictional data · Human-controlled decisions · No actual Metaview integration</span></footer>
+  </div>
+ </div>
+ <div id="toast" class="toast" role="status" aria-live="polite"></div>
+ <div id="dialog" class="modal-wrap hidden" aria-hidden="true"><div class="modal-backdrop" data-close="true"></div><section class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle"><button class="modal-close" data-close="true" aria-label="Close dialog">×</button><div id="dialogContent"></div></section></div>
+ <script src="/static/app.js" defer></script>
+</body>
+</html>
