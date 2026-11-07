@@ -11,7 +11,7 @@ from datetime import datetime, timezone
 from urllib.request import Request, urlopen
 from urllib.error import HTTPError, URLError
 
-MODEL = 'gemini-2.5-flash-lite'
+MODEL = 'gemini-3.1-flash-lite'
 PROMPT_LIMIT = 1500
 CASES = [
     {'id':'F01','title':'Full configuration ownership', 'reference':'supported','facts':[
