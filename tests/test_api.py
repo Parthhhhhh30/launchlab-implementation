@@ -48,7 +48,8 @@ def test_public_experience_and_studio_routes():
  with TestClient(server.app) as client:
   landing=client.get('/')
   assert landing.status_code==200
-  assert 'SIGNED' in landing.text and 'Break the workflow' in landing.text
+  assert 'SIGNED' in landing.text and 'href="/studio"' in landing.text
+  assert 'id="mapping-test"' in landing.text and 'href="/agent-lab"' in landing.text
   assert '/static/experience.js' in landing.text
   studio=client.get('/studio')
   assert studio.status_code==200 and 'Implementation studio' in studio.text
